@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+    id 'net.ltgt.apt'
+    id 'com.diffplug.gradle.spotless'
+}
+
+dependencies {
+    annotationProcessor 'com.google.auto.service:auto-service:1.0-rc6'
+
+    implementation 'com.google.auto.service:auto-service:1.0-rc6'
+    implementation 'com.google.guava:guava:28.1-jre'
+    implementation 'com.squareup:javapoet:1.8.0'
+
+    implementation 'edu.wpi.first.ntcore:ntcore-java:2019.4.1'
+    implementation 'edu.wpi.first.ntcore:ntcore-jni:2019.4.1'
+}
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+spotless {
+    java {
+        googleJavaFormat('1.7')
+
+        trimTrailingWhitespace()
+        indentWithSpaces() // or spaces. Takes an integer argument if you don't like 4
+        endWithNewline()
+    }
+}

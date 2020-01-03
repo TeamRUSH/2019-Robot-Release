@@ -1,0 +1,77 @@
+buildscript {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+
+        maven {
+            url = 'https://devsite.ctr-electronics.com/maven/release/'
+        }
+
+        maven {
+            url = 'https://first.wpi.edu/FRC/roborio/maven/release/'
+        }
+
+        maven {
+            url = 'https://www.kauailabs.com/maven2/'
+        }
+
+        maven {
+            url = 'http://www.revrobotics.com/content/sw/max/sdk/maven/'
+        }
+
+        maven {
+            url = 'https://jitpack.io'
+        }
+    }
+}
+
+plugins {
+    id 'java'
+    id 'net.ltgt.apt' version '0.21'
+    id 'edu.wpi.first.GradleRIO' version '2019.4.1'
+    id 'com.diffplug.gradle.spotless' version '3.26.0'
+    id 'org.hidetake.ssh' version '2.10.1'
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+
+        maven {
+            url = 'https://devsite.ctr-electronics.com/maven/release/'
+        }
+
+        maven {
+            url = 'https://first.wpi.edu/FRC/roborio/maven/release/'
+        }
+
+        maven {
+            url = 'https://www.kauailabs.com/maven2/'
+        }
+
+        maven {
+            url = 'http://www.revrobotics.com/content/sw/max/sdk/maven/'
+        }
+
+        maven {
+            url = 'https://jitpack.io'
+        }
+    }
+}
+
+subprojects {
+    version = '1.0'
+}
+
+spotless {
+    java {
+        googleJavaFormat('1.7')
+
+        trimTrailingWhitespace()
+        indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
+        endWithNewline()
+    }
+}

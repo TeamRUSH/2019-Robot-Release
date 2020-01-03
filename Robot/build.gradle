@@ -1,0 +1,109 @@
+plugins {
+    id 'java'
+    id 'net.ltgt.apt'
+    id 'edu.wpi.first.GradleRIO'
+    id 'com.diffplug.gradle.spotless'
+    id 'org.hidetake.ssh'
+}
+
+def ROBOT_MAIN_CLASS = "com.swervedrivespecialties.exampleswerve.Main"
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+dependencies {
+    annotationProcessor project(':frcconf')
+
+    compile 'com.google.code.gson:gson:2.8.6'
+
+    compile wpi.deps.vendor.java()
+    compile wpi.deps.wpilib()
+
+    compile project(':frcconf')
+    //compile project(':Common:robot')
+    //compile project(':Common')
+    compile 'com.github.FRCTeam2910.Common:robot:9f10c82'
+
+    nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
+    nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
+}
+
+jar {
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+}
+
+deploy {
+    targets {
+        roboRIO('roborio') {
+            team = frc.getTeamOrDefault(27)
+        }
+    }
+    artifacts {
+        frcJavaArtifact('frcJava') {
+            targets << 'roborio'
+
+            debug = frc.getDebugOrDefault(false)
+        }
+
+        // Built in artifact to deploy arbitrary files to the roboRIO.
+        fileTreeArtifact('frcStaticFileDeploy') {
+            // The directory below is the local directory to deploy
+            files = fileTree(dir: 'src/main/deploy')
+            // Deploy to RoboRIO target, into /home/lvuser/deploy
+            targets << 'roborio'
+            directory = '/home/lvuser/deploy'
+        }
+    }
+}
+
+spotless {
+    java {
+        googleJavaFormat('1.7')
+
+        trimTrailingWhitespace()
+        indentWithSpaces() // or spaces. Takes an integer argument if you don't like 4
+        endWithNewline()
+    }
+}
+
+ssh.settings {
+  dryRun = project.hasProperty('dryRun')
+
+  extensions.add restartRobot: {
+        execute '. /etc/profile.d/natinst-path.sh'
+        execute '/usr/local/frc/bin/frcKillRobot.sh -t -r 2> /dev/null'
+  }
+}
+
+remotes {
+    robot {
+        host = '10.0.27.2'
+        user = 'admin'
+    }
+}
+
+def localDeploy = 'C:\\Dev\\TeamRUSH\\BeeSwerve\\Robot\\src\\main\\deploy'
+def remoteDeploy = '/home/lvuser/deploy'
+
+task putConfig {
+    doLast {
+        ssh.run {
+            session(remotes.robot) {
+                put from: localDeploy, into: remoteDeploy
+
+                restartRobot()
+            }
+        }
+    }
+}
+
+task getConfig {
+    doLast {
+        ssh.run {
+            session(remotes.robot) {
+                get from: remoteDeploy, into: localDeploy
+            }
+        }
+    }
+}

@@ -1,0 +1,5 @@
+rootProject.name = 'BeeSwerve'
+rootProject.buildFileName = 'build.gradle'
+
+include ':Robot'
+include ':frcconf'
