@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Appenders>
+		<File name="File" bufferedIO="true" fileName="/media/sda1/logs/robot-latest.log">
+			<PatternLayout pattern="%d %p %m%n" />
+		</File>
+	</Appenders>
+	<Loggers>
+		<Root level="info" includeLocation="true">
+			<AppenderRef ref="File" />
+		</Root>
+	</Loggers>
+</Configuration>
